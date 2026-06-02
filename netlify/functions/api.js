@@ -100,6 +100,12 @@ exports.handler = async (event) => {
 
     return json(404, { error: 'Unknown action.' });
   } catch (err) {
-    return json(500, { error: err.message || String(err) });
-  }
-};
+  return json(500, {
+    error: err.message || String(err),
+    cause: err.cause?.message || null,
+    code: err.code || null,
+    urlPrefix: (process.env.SUPABASE_URL || '').slice(0, 35),
+    hasKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    keyStarts: (process.env.SUPABASE_SERVICE_ROLE_KEY || '').slice(0, 10)
+  });
+}
